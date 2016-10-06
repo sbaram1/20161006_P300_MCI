@@ -17,8 +17,15 @@ names(db)[1] <- c("No")
 names(db)
 str(db)
 nrow(db)
-summary(db)
+summary(db$dis)
 
+db1 <- filter(db, dis == 0 | dis == 2)
+
+db1 %>% filter(dis == 0) %>% nrow()
+db1 %>% filter(dis == 2) %>% nrow()
+
+
+nrow(db1)
 
 ```
 

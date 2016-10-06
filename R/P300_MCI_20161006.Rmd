@@ -5,8 +5,21 @@ date: "2016년 10월 6일"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r read data}
+lapply(c("magrittr", "dplyr"), require, character.only = T)
+
+
+setwd("C:/RBook/201610_P300_MCI/data")
+db <- read.csv("P300_MCI.csv", header = T, stringsAsFactors = F)
+setwd("C:/RBook/201610_P300_MCI/R")
+
+names(db)[1] <- c("No")
+names(db)
+str(db)
+nrow(db)
+summary(db)
+
+
 ```
 
 ## R Markdown

@@ -5,7 +5,7 @@ date: "2016년 10월 6일"
 output: html_document
 ---
 
-```{r read data, echo=FALSE, message=FALSE}
+```{r read data, echo=FALSE, message=FALSE, warning=FALSE}
 lapply(c("magrittr", "dplyr", "ggplot2", "gridExtra"), require, character.only = T)
 
 
@@ -33,17 +33,34 @@ Number of control: `r db1 %>% filter(dis == 0) %>% nrow()`
 
 Number of MCI: `r db1 %>% filter(dis == 2) %>% nrow()`
 
+## Normality testing
+```{r normality, echo=T}
+
+# names(db1)
+
+hist(db1$p3_BL)
+# hist(db1$P3_FU)
+
+shapiro.test(db1$p3_BL)
+shapiro.test(db1$P3_FU)
+
+```
+
+
 ## Table 1
 ```{r table 1}
 
 db1 %>% group_by(dis) %>% summarise(mean(age), sd(age), mean(p3_BL), sd(p3_BL))
 
 # correlation: Pearson's r
-db1 %>% group_by(dis) %>% summarise(cor(age, p3_BL))
+# db1 %>% group_by(dis) %>% summarise(cor(age, p3_BL))
+db1 %>% filter(dis == 0) %>% with(cor.test(age, p3_BL, method = "p"))
+db1 %>% filter(dis == 2) %>% with(cor.test(age, p3_BL, method = "p"))
 
-# correlation: Spearman's rho
-db1 %>% filter(dis == 0) %>% with(cor.test(age, p3_BL, method = "s"))
-db1 %>% filter(dis == 2) %>% with(cor.test(age, p3_BL, method = "s"))
+
+# # correlation: Spearman's rho
+# db1 %>% filter(dis == 0) %>% with(cor.test(age, p3_BL, method = "s"))
+# db1 %>% filter(dis == 2) %>% with(cor.test(age, p3_BL, method = "s"))
 
 ```
 
@@ -72,7 +89,7 @@ p0 <- db1 %>% filter(dis == 0) %>%
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()) +
   ggtitle("Control") +
-  annotate(geom = "text", label = "rho = 0.56, p < 0.01", x=57, y=390, size=3)
+  annotate(geom = "text", label = "R = 0.62, p < 0.01", x=57, y=390, size=3)
 
 p2 <- db1 %>% filter(dis == 2) %>%
   ggplot(aes(age, p3_BL)) + geom_point() + geom_smooth(method = "lm") +
@@ -85,7 +102,7 @@ p2 <- db1 %>% filter(dis == 2) %>%
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()) +
   ggtitle("MCI") +
-  annotate(geom="text", label = "rho = 0.12, p = 0.51", x=59.5, y=410, size=3)
+  annotate(geom="text", label = "R = 0.15, p = 0.45", x=59.5, y=410, size=3)
 
 grid.arrange(p0, p2, nrow = 1, ncol = 2)
 
@@ -100,14 +117,14 @@ number of patient with f/u data: `r db1 %>% filter(!is.na(P3_FU)) %>% nrow`
 
 db_diff <- db1 %>% filter(!is.na(P3_FU))
 
-mean(db_diff$p3_BL)
-mean(db_diff$P3_FU)
-sd(db_diff$p3_BL)
-sd(db_diff$P3_FU)
+cbind(mean(db_diff$p3_BL), sd(db_diff$p3_BL))
+cbind(mean(db_diff$P3_FU), sd(db_diff$P3_FU))
 
 wilcox.test(db_diff$p3_BL, db_diff$P3_FU, paired = T)
 
 # if paired t test
+shapiro.test(db_diff$p3_BL)
+shapiro.test(db_diff$P3_FU)
 
 t.test(db_diff$p3_BL, db_diff$P3_FU, paired = T)
 ```
@@ -136,9 +153,9 @@ ggplot(db_diff, aes(x = age, y = p3_diff, color = factor(p3_color))) +
     panel.background = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank())
-
-ggplot(db_diff, aes(x = p3_BL, y = P3_FU)) + geom_point() +
-  geom_abline(intercept=0, slope=1)
+# 
+# ggplot(db_diff, aes(x = p3_BL, y = P3_FU)) + geom_point() +
+#   geom_abline(intercept=0, slope=1)
 
 ```
 

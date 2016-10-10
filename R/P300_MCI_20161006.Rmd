@@ -9,10 +9,10 @@ output: html_document
 lapply(c("magrittr", "dplyr", "ggplot2", "gridExtra"), require, character.only = T)
 
 
-setwd("C:/RBook/201610_P300_MCI/data")
+setwd("C:/Users/KYP/Dropbox/RBook/201610_P300_MCI/data")
 db <- read.csv("P300_MCI.csv", header = T, stringsAsFactors = F)
 # db <- read_spss("P300_SNSB_MCI.sav")
-setwd("C:/RBook/201610_P300_MCI/R")
+setwd("C:/Users/KYP/Dropbox/RBook/201610_P300_MCI/R")
 
 names(db)[1] <- c("No")
 # names(db)
@@ -29,7 +29,7 @@ db1 <- filter(db, dis == 0 | dis == 2, age > 50, !is.na(p3_BL), depression == 0)
 
 ## Baseline data
 
-Number of control: `r db1 %>% filter(dis == 0) %>% nrow()`
+Number of control:  `r db1 %>% filter(dis == 0) %>% nrow()`
 
 Number of MCI: `r db1 %>% filter(dis == 2) %>% nrow()`
 
